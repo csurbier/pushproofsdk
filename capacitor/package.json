@@ -6,7 +6,7 @@
   "homepage": "https://pushproof.dev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/csurbier/pushproofsdk.git",
+    "url": "git+https://github.com/csurbier/pushproofsdk.git",
     "directory": "capacitor"
   },
   "keywords": [
