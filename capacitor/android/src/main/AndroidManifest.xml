@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- L'app cliente déclare PushproofMessagingService dans SON manifest
+         (voir README). Ce manifest de plugin reste minimal. -->
+</manifest>

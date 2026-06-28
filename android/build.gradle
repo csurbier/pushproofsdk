@@ -1,0 +1,50 @@
+// Library Kotlin — cœur Android Pushproof (SPEC §3/§6).
+// Publiée via JitPack : com.github.csurbier.pushproofsdk:android:<tag>
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
+}
+
+group = 'dev.pushproof'
+version = '1.0.0'
+
+android {
+    namespace 'dev.pushproof'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 23
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions { jvmTarget = '17' }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
+    }
+}
+
+dependencies {
+    // FirebaseMessagingService est fourni par l'app cliente (déjà sur FCM).
+    compileOnly 'com.google.firebase:firebase-messaging:24.0.0'
+}
+
+// JitPack remplace le groupId par com.github.csurbier ; l'artifactId = nom du module (android).
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'dev.pushproof'
+                artifactId = 'android'
+                version = '1.0.0'
+            }
+        }
+    }
+}

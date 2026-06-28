@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Node / Capacitor
+node_modules/
+capacitor/dist/
+capacitor/node_modules/
+
+# Cœur natif Android vendorisé dans le wrapper (généré par scripts/sync-native-android.js).
+# Source de vérité : android/src/main/java/dev/pushproof/ — on ne commite pas les copies.
+capacitor/android/src/main/java/dev/pushproof/PushproofCore.kt
+capacitor/android/src/main/java/dev/pushproof/ReceiptSender.kt
+capacitor/android/src/main/java/dev/pushproof/PushproofMessagingService.kt
+
+# SwiftPM / Xcode
+.build/
+.swiftpm/
+DerivedData/
+*.xcuserstate
+
+# Gradle / Android
+.gradle/
+build/
+local.properties
+*.iml

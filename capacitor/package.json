@@ -1,0 +1,64 @@
+{
+  "name": "@pushproof/capacitor",
+  "version": "1.0.0",
+  "description": "Confirmation de livraison des notifications push (iOS NSE + Android FCM) pour Capacitor.",
+  "license": "MIT",
+  "homepage": "https://pushproof.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/csurbier/pushproofsdk.git",
+    "directory": "capacitor"
+  },
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "push",
+    "notifications",
+    "delivery receipt",
+    "fcm",
+    "apns",
+    "pushproof"
+  ],
+  "main": "dist/plugin.cjs.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "files": [
+    "android/src/main/",
+    "android/build.gradle",
+    "dist/",
+    "ios/Plugin/",
+    "src/",
+    "Pushproof.podspec",
+    "scripts/"
+  ],
+  "scripts": {
+    "build": "npm run clean && tsc && rollup -c rollup.config.mjs",
+    "clean": "rimraf ./dist",
+    "sync:native": "node scripts/sync-native-android.js",
+    "watch": "tsc --watch",
+    "prepack": "npm run sync:native && npm run build"
+  },
+  "bin": {
+    "pushproof-install-nse": "scripts/install-nse.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@capacitor/core": ">=6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/core": "^6.0.0",
+    "rimraf": "^5.0.0",
+    "rollup": "^4.0.0",
+    "typescript": "^5.4.0"
+  },
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  }
+}
