@@ -1,11 +1,10 @@
 # Build JitPack de la lib native Android (module :android).
 # Coordonnée publiée : com.github.csurbier.pushproofsdk:android:<tag>
 #
-# Note : aucun gradle-wrapper n'est commité ici. JitPack fournit un Gradle
-# récent (compatible AGP 8.2). Pour un build 100 % déterministe, générez et
-# commitez un wrapper :  gradle wrapper --gradle-version 8.5
-#   puis remplacez `gradle` par `./gradlew` ci-dessous.
+# Le Gradle wrapper (gradle/wrapper/, gradlew) épingle Gradle 8.7, compatible
+# AGP 8.2. Sans wrapper, JitPack retombe sur un Gradle système trop ancien
+# (4.8.1) → build cassé. On force donc ./gradlew.
 jdk:
   - openjdk17
 install:
-  - gradle --no-daemon :android:publishToMavenLocal
+  - ./gradlew --no-daemon :android:publishToMavenLocal
