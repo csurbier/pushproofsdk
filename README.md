@@ -52,7 +52,7 @@ repositories {
 then the dependency:
 
 ```gradle
-implementation 'com.github.csurbier.pushproofsdk:android:1.0.0'
+implementation 'com.github.csurbier:pushproofsdk:1.0.1'
 ```
 
 > **Capacitor users don't need this** — the native core is bundled inside

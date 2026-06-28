@@ -179,7 +179,7 @@ endpoints:
 
 - **iOS**: add the `Pushproof` Swift Package (`https://github.com/csurbier/pushproofsdk`).
 - **Android**: via [JitPack](https://jitpack.io) — add `maven { url 'https://jitpack.io' }`,
-  then `implementation 'com.github.csurbier.pushproofsdk:android:1.0.0'`.
+  then `implementation 'com.github.csurbier:pushproofsdk:1.0.1'`.
 
 > When using `@pushproof/capacitor`, the Android core is already bundled in the
 > plugin — you don't add the JitPack dependency.
