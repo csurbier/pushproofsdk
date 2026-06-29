@@ -20,7 +20,7 @@ computes the delivery rate and displays it in the [dashboard](https://app.pushpr
 ## Installation
 
 ```bash
-npm install @pushproof/capacitor@1.2.0
+npm install @pushproof/capacitor@1.3.0
 npx cap sync
 ```
 
