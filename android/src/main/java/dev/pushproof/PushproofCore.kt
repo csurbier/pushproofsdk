@@ -13,19 +13,32 @@ object PushproofCore {
     private const val PREFS = "pushproof"
     private const val KEY_INGEST_URL = "ingestUrl"
     private const val KEY_INGEST_KEY = "ingestKey"
+    private const val KEY_DISPLAY_NOTIFICATION = "displayNotification"
     private const val KEY_INSTALL_ID = "installId"
     private const val KEY_USER_ID = "userId"
 
     data class Config(val ingestUrl: String, val ingestKey: String)
 
-    fun configure(context: Context, ingestUrl: String, ingestKey: String) {
+    fun configure(
+        context: Context,
+        ingestUrl: String,
+        ingestKey: String,
+        displayNotification: Boolean = true,
+    ) {
         context.applicationContext
             .getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .edit()
             .putString(KEY_INGEST_URL, ingestUrl)
             .putString(KEY_INGEST_KEY, ingestKey)
+            .putBoolean(KEY_DISPLAY_NOTIFICATION, displayNotification)
             .apply()
         installId(context) // garantit l'installId dès la configuration
+    }
+
+    /** Affiche une notification système pour les messages FCM data-only (défaut : true). */
+    fun displayNotification(context: Context): Boolean {
+        val p = context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        return p.getBoolean(KEY_DISPLAY_NOTIFICATION, true)
     }
 
     fun config(context: Context): Config? {

@@ -40,4 +40,5 @@ dependencies {
     // (scripts/sync-native-android.js) → aucune dépendance Maven externe à résoudre.
     // FirebaseMessagingService est fourni par l'app cliente (déjà sur FCM).
     compileOnly 'com.google.firebase:firebase-messaging:24.0.0'
+    implementation 'androidx.core:core:1.12.0'
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- L'app cliente déclare PushproofMessagingService dans SON manifest
-         (voir README). Ce manifest de plugin reste minimal. -->
+         (voir README). Affichage natif des push data-only : -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

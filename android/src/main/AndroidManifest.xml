@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Library cœur Android. L'app cliente déclare PushproofMessagingService
-         (ou appelle PushproofMessagingService.handle) — cf. doc Capacitor. -->
+    <!-- Affichage natif des push data-only (Android 13+). L'app doit demander la permission
+         à l'exécution (souvent déjà fait via @capacitor/push-notifications). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

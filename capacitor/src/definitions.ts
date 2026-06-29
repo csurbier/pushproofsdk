@@ -5,6 +5,12 @@ export interface PushproofConfig {
   ingestKey: string;
   /** App Group iOS partagé entre l'app et la NSE, ex: group.<BUNDLE_ID>. */
   appGroup?: string;
+  /**
+   * Android only. When `true` (default), shows a system notification from
+   * `data.title` and `data.body` for data-only FCM messages — required because
+   * data-only pushes are not displayed automatically by Android.
+   */
+  displayNotification?: boolean;
 }
 
 export interface DeliveryReceipt {

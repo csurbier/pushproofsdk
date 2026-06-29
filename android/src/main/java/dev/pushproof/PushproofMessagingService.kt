@@ -28,6 +28,7 @@ open class PushproofMessagingService : FirebaseMessagingService() {
             val (notifId, userId, campaign) = ReceiptSender.extractIds(message.data)
             if (notifId == null) return
             val config = PushproofCore.config(service.applicationContext) ?: return
+            NotificationDisplay.showIfEnabled(service.applicationContext, message.data)
             ReceiptSender.send(service.applicationContext, notifId, userId, config, campaign)
         }
     }

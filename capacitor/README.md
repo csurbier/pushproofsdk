@@ -56,7 +56,8 @@ For Pushproof to correlate "sent" and "delivered", your sending backend must,
 - **Android**: send a **data-only** message (no `notification` block). This
   ensures `onMessageReceived`, including when the app is in the background. A
   *notification message* in the background goes to the system tray **without**
-  calling the service.
+  calling the service. Include `title` and `body` in the `data` block — the SDK
+  displays them automatically (see [Android visual display](#android-visual-display-data-only)).
 - *(optional)* inject a `campaign` label to attribute the **delivered** receipt
   to a campaign. Use the **same label** you pass to `POST /v1/sent`, so delivered
   and sent line up per campaign in the dashboard. Without it, deliveries are
@@ -167,6 +168,34 @@ override fun onMessageReceived(message: RemoteMessage) {
 > Send **data-only** messages: Android does not always invoke
 > `onMessageReceived` for *notification messages* in the background.
 
+### Android visual display (data-only)
+
+Data-only FCM messages do not show in the system tray by themselves. **Pushproof
+handles this for you** — no extra client code required.
+
+When `displayNotification` is enabled (**default: `true`**), the SDK posts a
+system notification from `data.title` and `data.body` every time
+`onMessageReceived` runs (foreground and background). Your existing `configure()`
+call is enough:
+
+```ts
+await Pushproof.configure({
+  ingestUrl: 'https://api.pushproof.dev/v1/receipts',
+  ingestKey: 'pk_ingest_…',
+  appGroup: 'group.com.example.app',
+  // displayNotification: true,  // default — set false if you render notifications yourself
+});
+```
+
+Requirements:
+
+- `title` and `body` must be present in the FCM `data` payload (see example above).
+- On Android 13+, the app must have notification permission (usually already
+  granted via `@capacitor/push-notifications`).
+
+If you already display notifications yourself (custom FCM service with extra UI
+logic), pass `displayNotification: false` to avoid duplicates.
+
 ## App states (important)
 
 The capture path depends on the platform **and** app state:
@@ -202,7 +231,7 @@ PushNotifications.addListener('pushNotificationReceived', (notif) => {
 
 | Method | Description |
 |--------|-------------|
-| `configure(config)` | **Required.** Registers `ingestUrl`, `ingestKey`, `appGroup`. |
+| `configure(config)` | **Required.** Registers `ingestUrl`, `ingestKey`, `appGroup`, `displayNotification` (Android, default `true`). |
 | `identify({ userId })` | Tags the device with a user (Pro). Call at login. Mono-account. |
 | `clearIdentity()` | Removes the device↔user link. Call at logout. |
 | `recordDelivery({ notifId, campaign?, userId? })` | Captures a delivery in-app (iOS foreground). Idempotent. |

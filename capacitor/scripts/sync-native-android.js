@@ -13,7 +13,12 @@
 const fs = require('fs');
 const path = require('path');
 
-const FILES = ['PushproofCore.kt', 'ReceiptSender.kt', 'PushproofMessagingService.kt'];
+const FILES = [
+  'PushproofCore.kt',
+  'ReceiptSender.kt',
+  'PushproofMessagingService.kt',
+  'NotificationDisplay.kt',
+];
 
 const repoRoot = path.resolve(__dirname, '..', '..');
 const srcDir = path.join(repoRoot, 'android', 'src', 'main', 'java', 'dev', 'pushproof');

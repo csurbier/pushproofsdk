@@ -22,7 +22,12 @@ class PushproofPlugin : Plugin() {
             call.reject("ingestUrl et ingestKey sont requis")
             return
         }
-        PushproofCore.configure(context, ingestUrl, ingestKey)
+        PushproofCore.configure(
+            context,
+            ingestUrl,
+            ingestKey,
+            call.getBoolean("displayNotification", true),
+        )
         call.resolve()
     }
 
