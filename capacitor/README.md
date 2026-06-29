@@ -127,7 +127,9 @@ npx pushproof-install-nse
 The script checks prerequisites and prints the steps. Full details:
 [INSTALL-iOS-NSE.md](../INSTALL-iOS-NSE.md). In short:
 
-1. Create a **Notification Service Extension** target named `PushproofNSE`.
+1. Create a **Notification Service Extension** target named
+   `PushproofNotificationExtension` — **not** `PushproofNSE` (that name collides
+   with the SDK's Swift Package product; see [INSTALL-iOS-NSE.md](../INSTALL-iOS-NSE.md)).
 2. Its `NotificationService.swift` reduces to:
    ```swift
    import PushproofNSE
@@ -253,7 +255,7 @@ endpoints:
 
 - **iOS**: add the `Pushproof` Swift Package (`https://github.com/csurbier/pushproofsdk`).
 - **Android**: via [JitPack](https://jitpack.io) — add `maven { url 'https://jitpack.io' }`,
-  then `implementation 'com.github.csurbier:pushproofsdk:1.2.0'`.
+  then `implementation 'com.github.csurbier:pushproofsdk:1.3.3'`.
 
 > When using `@pushproof/capacitor`, the Android core is already bundled in the
 > plugin — you don't add the JitPack dependency.
