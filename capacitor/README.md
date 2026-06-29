@@ -20,7 +20,7 @@ computes the delivery rate and displays it in the [dashboard](https://app.pushpr
 ## Installation
 
 ```bash
-npm install @pushproof/capacitor@1.3.2
+npm install @pushproof/capacitor@1.3.3
 npx cap sync
 ```
 
@@ -179,7 +179,7 @@ app state:
 | State | Behavior |
 |-------|----------|
 | **Foreground** | Forwards to `@capacitor/push-notifications` → `pushNotificationReceived` (your in-app popup). No system notification. |
-| **Background / killed** | Posts a system notification from `data.title` and `data.body`. |
+| **Background / killed** | Posts a system notification from `data.title` and `data.body`. Tap opens the app and fires Capacitor `pushNotificationActionPerformed` with the full `data` payload. |
 
 Your existing `configure()` call is enough:
 

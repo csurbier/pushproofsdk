@@ -48,7 +48,7 @@ object NotificationDisplay {
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(launchPendingIntent(appContext))
+            .setContentIntent(launchPendingIntent(appContext, data))
 
         NotificationManagerCompat.from(appContext).notify(notificationId, builder.build())
     }
@@ -94,12 +94,24 @@ object NotificationDisplay {
         return if (icon != 0) icon else android.R.drawable.ic_dialog_info
     }
 
-    private fun launchPendingIntent(context: Context): PendingIntent? {
+    /**
+     * Intent de lancement enrichi pour que Capacitor (`PushNotificationsPlugin.handleOnNewIntent`)
+     * déclenche `pushNotificationActionPerformed` au tap — même format que FCM natif.
+     */
+    private fun launchPendingIntent(context: Context, data: Map<String, String>): PendingIntent? {
         val launch = context.packageManager.getLaunchIntentForPackage(context.packageName)
             ?: return null
-        launch.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        launch.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+
+        val messageId = data["notif_id"] ?: data["notifId"]
+            ?: "pushproof-${System.currentTimeMillis()}"
+        launch.putExtra("google.message_id", messageId)
+        for ((key, value) in data) {
+            launch.putExtra(key, value)
+        }
+
         val flags = PendingIntent.FLAG_UPDATE_CURRENT or
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
-        return PendingIntent.getActivity(context, 0, launch, flags)
+        return PendingIntent.getActivity(context, messageId.hashCode(), launch, flags)
     }
 }
