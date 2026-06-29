@@ -79,6 +79,9 @@ The NSE reads the App Group name from its own Info.plist. In the
 |-----|------|--------|
 | `PushproofAppGroup` | String | `group.<BUNDLE_ID>` |
 
+> ⚠️ Add this key at the **root** of the Info.plist — **not** inside the
+> `NSExtension` dictionary (Xcode often drops new keys there by mistake).
+>
 > This key is **required** with a custom target name. (Only when the target's
 > bundle id ends in `.nse` does the SDK fall back to deriving the group from it —
 > not the case here, so set the key explicitly.)
