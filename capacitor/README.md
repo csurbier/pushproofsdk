@@ -189,11 +189,8 @@ import { Pushproof } from '@pushproof/capacitor';
 PushNotifications.addListener('pushNotificationReceived', (notif) => {
   const notifId = notif.data?.notif_id;
   if (notifId) {
-    Pushproof.recordDelivery({
-      notifId,
-      campaign: notif.data?.campaign,
-      userId: notif.data?.user_id,
-    });
+    // userId not needed here: identify() already tags the device
+    Pushproof.recordDelivery({ notifId, campaign: notif.data?.campaign });
   }
 });
 ```
