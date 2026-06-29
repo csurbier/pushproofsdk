@@ -20,7 +20,7 @@ computes the delivery rate and displays it in the [dashboard](https://app.pushpr
 ## Installation
 
 ```bash
-npm install @pushproof/capacitor@1.0.0
+npm install @pushproof/capacitor@1.1.0
 npx cap sync
 ```
 
@@ -57,6 +57,10 @@ For Pushproof to correlate "sent" and "delivered", your sending backend must,
   ensures `onMessageReceived`, including when the app is in the background. A
   *notification message* in the background goes to the system tray **without**
   calling the service.
+- *(optional)* inject a `campaign` label to attribute the **delivered** receipt
+  to a campaign. Use the **same label** you pass to `POST /v1/sent`, so delivered
+  and sent line up per campaign in the dashboard. Without it, deliveries are
+  recorded with an empty campaign and won't join your `/v1/sent` declarations.
 - *(optional, Pro)* inject an opaque `user_id` for per-user tracking.
 
 Example FCM payload (data-only):
@@ -68,6 +72,7 @@ Example FCM payload (data-only):
     "apns": { "payload": { "aps": { "mutable-content": 1 } } },
     "data": {
       "notif_id": "8f14e45f-ceea-467d-9a3b-2c1d4f5e6a7b",
+      "campaign": "promo_2026_06",
       "user_id":  "usr_4f3a9c",
       "title": "…", "body": "…"
     }
@@ -75,8 +80,10 @@ Example FCM payload (data-only):
 }
 ```
 
-Also declare your sends via `POST /v1/sent` to get a true *rate*
-(delivered / sent). See the [API reference](https://app.pushproof.dev/docs).
+The SDK reads `notif_id`, `campaign` and `user_id` from the payload and relays them
+on the receipt — it never invents them. Also declare your sends via `POST /v1/sent`
+(with the same `campaign`) to get a true *rate* (delivered / sent). See the
+[API reference](https://app.pushproof.dev/docs).
 
 ## 3. iOS setup (NSE target)
 
@@ -154,7 +161,11 @@ import { Pushproof } from '@pushproof/capacitor';
 PushNotifications.addListener('pushNotificationReceived', (notif) => {
   const notifId = notif.data?.notif_id;
   if (notifId) {
-    Pushproof.recordDelivery({ notifId, userId: notif.data?.user_id });
+    Pushproof.recordDelivery({
+      notifId,
+      campaign: notif.data?.campaign,
+      userId: notif.data?.user_id,
+    });
   }
 });
 ```
@@ -167,7 +178,7 @@ PushNotifications.addListener('pushNotificationReceived', (notif) => {
 | Method | Description |
 |--------|-------------|
 | `configure(config)` | **Required.** Registers `ingestUrl`, `ingestKey`, `appGroup`. |
-| `recordDelivery({ notifId, userId? })` | Captures a delivery in-app (iOS foreground). Idempotent. |
+| `recordDelivery({ notifId, campaign?, userId? })` | Captures a delivery in-app (iOS foreground). Idempotent. |
 | `getPendingReceipts()` | Receipts queued by the NSE during degraded network (iOS). |
 
 Full types in [`src/definitions.ts`](src/definitions.ts).
@@ -179,7 +190,7 @@ endpoints:
 
 - **iOS**: add the `Pushproof` Swift Package (`https://github.com/csurbier/pushproofsdk`).
 - **Android**: via [JitPack](https://jitpack.io) — add `maven { url 'https://jitpack.io' }`,
-  then `implementation 'com.github.csurbier:pushproofsdk:1.0.1'`.
+  then `implementation 'com.github.csurbier:pushproofsdk:1.1.0'`.
 
 > When using `@pushproof/capacitor`, the Android core is already bundled in the
 > plugin — you don't add the JitPack dependency.

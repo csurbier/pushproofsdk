@@ -18,11 +18,16 @@ object ReceiptSender {
 
     private val executor = Executors.newSingleThreadExecutor()
 
-    /** Lit notif_id / user_id dans les données du message (clé de corrélation). */
-    fun extractIds(data: Map<String, String>): Pair<String?, String?> {
+    /**
+     * Lit notif_id / user_id / campaign dans les données du message.
+     * `campaign` (optionnel) attribue l'accusé livré à une campagne, pour le
+     * rapprocher de l'envoi déclaré via /v1/sent.
+     */
+    fun extractIds(data: Map<String, String>): Triple<String?, String?, String?> {
         val notifId = data["notif_id"] ?: data["notifId"]
         val userId = data["user_id"] ?: data["userId"]
-        return notifId to userId
+        val campaign = data["campaign"]
+        return Triple(notifId, userId, campaign)
     }
 
     fun send(
@@ -30,11 +35,12 @@ object ReceiptSender {
         notifId: String,
         userId: String?,
         config: PushproofCore.Config,
+        campaign: String? = null,
         onResult: ((Boolean) -> Unit)? = null,
     ) {
         val device = PushproofCore.installId(context)
         executor.execute {
-            val ok = runCatching { doPost(notifId, userId, device, config) }.getOrDefault(false)
+            val ok = runCatching { doPost(notifId, userId, device, config, campaign) }.getOrDefault(false)
             onResult?.invoke(ok)
         }
     }
@@ -44,6 +50,7 @@ object ReceiptSender {
         userId: String?,
         device: String,
         config: PushproofCore.Config,
+        campaign: String?,
     ): Boolean {
         val body = JSONObject().apply {
             put("notifId", notifId)
@@ -51,6 +58,7 @@ object ReceiptSender {
             put("platform", "android")
             put("receivedAt", iso8601(Date()))
             if (!userId.isNullOrEmpty()) put("userId", userId)
+            if (!campaign.isNullOrEmpty()) put("campaign", campaign)
         }.toString()
 
         val conn = (URL(config.ingestUrl).openConnection() as HttpURLConnection).apply {

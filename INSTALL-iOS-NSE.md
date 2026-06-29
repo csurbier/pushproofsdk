@@ -32,7 +32,7 @@ Xcode generates a `NotificationService.swift` file in the `PushproofNSE/` folder
 
 1. **File → Add Package Dependencies…**
 2. Repository URL: `https://github.com/csurbier/pushproofsdk`
-   (`Package.swift` is at the repo root). Pin version **1.0.0** (git tag `1.0.0`).
+   (`Package.swift` is at the repo root). Pin version **1.1.0** (git tag `1.1.0`).
 3. Link the products:
    - **PushproofCore** → **App** target.
    - **PushproofNSE** → **PushproofNSE** target.
@@ -118,7 +118,8 @@ this case: you use the Swift API directly.
 Your backend must send a **real alert notification with
 `"mutable-content": 1`** (otherwise iOS will not wake the NSE). ⚠️ A **silent /
 data-only** push does **not** trigger the NSE on iOS (data-only is the Android
-recommendation). Inject `notif_id` (and `user_id` on Pro plans) into the payload.
+recommendation). Inject `notif_id` into the payload (and optionally `campaign` to
+attribute the delivery, and `user_id` on Pro plans).
 
 ## 8. Commit the `ios/` folder
 

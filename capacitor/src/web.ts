@@ -12,7 +12,7 @@ export class PushproofWeb extends WebPlugin implements PushproofPlugin {
     this.warn();
   }
 
-  async recordDelivery(_receipt: { notifId: string; userId?: string }): Promise<{ accepted: boolean }> {
+  async recordDelivery(_receipt: { notifId: string; userId?: string; campaign?: string }): Promise<{ accepted: boolean }> {
     this.warn();
     return { accepted: false };
   }

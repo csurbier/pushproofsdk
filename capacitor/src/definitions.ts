@@ -11,6 +11,8 @@ export interface DeliveryReceipt {
   notifId: string;
   /** optionnel : identifiant opaque du client, lu dans le payload (feature Pro). */
   userId?: string;
+  /** optionnel : libellé de campagne, lu dans le payload, pour attribuer le livré. */
+  campaign?: string;
   platform: 'ios' | 'android';
   /** ISO8601 */
   receivedAt: string;
@@ -29,8 +31,11 @@ export interface PushproofPlugin {
    *
    * Inutile sur Android (onMessageReceived s'exécute déjà en foreground), mais
    * sans effet néfaste si appelé.
+   *
+   * `campaign` (optionnel) : relayez `notif.data?.campaign` pour attribuer le
+   * livré à une campagne (rapproché de l'envoi déclaré via /v1/sent).
    */
-  recordDelivery(receipt: { notifId: string; userId?: string }): Promise<{ accepted: boolean }>;
+  recordDelivery(receipt: { notifId: string; userId?: string; campaign?: string }): Promise<{ accepted: boolean }>;
 
   /** Accusés mis en file par la NSE (lus via App Group) et pas encore confirmés. */
   getPendingReceipts(): Promise<{ receipts: DeliveryReceipt[] }>;

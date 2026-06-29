@@ -36,7 +36,11 @@ public class PushproofPlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("notifId requis")
             return
         }
-        Pushproof.shared.sendReceipt(notifId: notifId, userId: call.getString("userId")) { ok in
+        Pushproof.shared.sendReceipt(
+            notifId: notifId,
+            userId: call.getString("userId"),
+            campaign: call.getString("campaign")
+        ) { ok in
             call.resolve(["accepted": ok])
         }
     }

@@ -23,13 +23,15 @@ public struct PendingReceipt: Codable, Equatable {
     public let notifId: String
     public let userId: String?
     public let platform: String
+    public let campaign: String?
     public let receivedAt: String
     public let delivered: Bool
 
-    public init(notifId: String, userId: String?, platform: String, receivedAt: String, delivered: Bool) {
+    public init(notifId: String, userId: String?, platform: String, campaign: String? = nil, receivedAt: String, delivered: Bool) {
         self.notifId = notifId
         self.userId = userId
         self.platform = platform
+        self.campaign = campaign
         self.receivedAt = receivedAt
         self.delivered = delivered
     }

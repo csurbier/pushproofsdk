@@ -38,7 +38,9 @@ class PushproofPlugin : Plugin() {
             call.reject("configure() doit être appelé d'abord")
             return
         }
-        dev.pushproof.ReceiptSender.send(context, notifId, call.getString("userId"), config) { ok ->
+        dev.pushproof.ReceiptSender.send(
+            context, notifId, call.getString("userId"), config, call.getString("campaign")
+        ) { ok ->
             call.resolve(JSObject().put("accepted", ok))
         }
     }

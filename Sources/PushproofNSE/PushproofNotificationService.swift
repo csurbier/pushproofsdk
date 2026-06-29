@@ -61,7 +61,7 @@ open class PushproofNotificationService: UNNotificationServiceExtension {
         appGroup: String?,
         completion: @escaping () -> Void
     ) {
-        let (notifId, userId) = ReceiptSender.extractIds(from: userInfo)
+        let (notifId, userId, campaign) = ReceiptSender.extractIds(from: userInfo)
         guard
             let notifId = notifId,
             let config = SharedStore.loadConfig(appGroup: appGroup)
@@ -75,12 +75,13 @@ open class PushproofNotificationService: UNNotificationServiceExtension {
 
         ReceiptSender.send(
             notifId: notifId, userId: userId, platform: "ios",
-            config: config, device: device, receivedAt: receivedAt
+            config: config, device: device, campaign: campaign, receivedAt: receivedAt
         ) { ok in
             // En cas d'échec réseau, on met en file pour renvoi par l'app.
             if !ok {
                 let pending = PendingReceipt(
                     notifId: notifId, userId: userId, platform: "ios",
+                    campaign: campaign,
                     receivedAt: ISO8601DateFormatter().string(from: receivedAt),
                     delivered: true
                 )

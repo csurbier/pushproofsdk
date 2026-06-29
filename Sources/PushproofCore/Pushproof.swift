@@ -26,11 +26,11 @@ public final class Pushproof {
     /// Envoie un accusé depuis l'app (cas in-app / mode dégradé). En pratique,
     /// la réception réelle est captée par la NSE ; cette méthode sert aux tests
     /// et au renvoi des accusés mis en file.
-    public func sendReceipt(notifId: String, userId: String? = nil, completion: ((Bool) -> Void)? = nil) {
+    public func sendReceipt(notifId: String, userId: String? = nil, campaign: String? = nil, completion: ((Bool) -> Void)? = nil) {
         guard let cfg = config else { completion?(false); return }
         ReceiptSender.send(
             notifId: notifId, userId: userId, platform: "ios",
-            config: cfg, device: deviceId
+            config: cfg, device: deviceId, campaign: campaign
         ) { ok in completion?(ok) }
     }
 

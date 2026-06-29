@@ -12,6 +12,7 @@ public enum ReceiptSender {
         platform: String,
         config: PushproofConfig,
         device: String,
+        campaign: String? = nil,
         receivedAt: Date = Date(),
         session: URLSession = .shared,
         completion: @escaping (Bool) -> Void
@@ -30,6 +31,9 @@ public enum ReceiptSender {
         if let userId = userId, !userId.isEmpty {
             body["userId"] = userId
         }
+        if let campaign = campaign, !campaign.isEmpty {
+            body["campaign"] = campaign
+        }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -45,9 +49,11 @@ public enum ReceiptSender {
         }.resume()
     }
 
-    /// Extrait `notif_id` / `user_id` du payload reçu (clé de corrélation, SPEC §2).
-    /// Le SDK ne génère JAMAIS le notif_id : il le lit dans la notification.
-    public static func extractIds(from userInfo: [AnyHashable: Any]) -> (notifId: String?, userId: String?) {
+    /// Extrait `notif_id` / `user_id` / `campaign` du payload reçu (SPEC §2).
+    /// Le SDK ne génère JAMAIS ces valeurs : il les lit dans la notification.
+    /// `campaign` (optionnel) attribue l'accusé livré à une campagne, pour le
+    /// rapprocher de l'envoi déclaré via `/v1/sent`.
+    public static func extractIds(from userInfo: [AnyHashable: Any]) -> (notifId: String?, userId: String?, campaign: String?) {
         // Le backend émetteur peut placer notif_id au niveau racine (data-only)
         // ou dans un sous-dictionnaire applicatif. On gère les deux.
         func find(_ keys: [String], in dict: [AnyHashable: Any]) -> String? {
@@ -56,6 +62,7 @@ public enum ReceiptSender {
         }
         let notifId = find(["notif_id", "notifId"], in: userInfo)
         let userId = find(["user_id", "userId"], in: userInfo)
-        return (notifId, userId)
+        let campaign = find(["campaign"], in: userInfo)
+        return (notifId, userId, campaign)
     }
 }

@@ -25,10 +25,10 @@ open class PushproofMessagingService : FirebaseMessagingService() {
         /** Cœur réutilisable, appelable depuis le service existant de l'app. */
         @JvmStatic
         fun handle(service: FirebaseMessagingService, message: RemoteMessage) {
-            val (notifId, userId) = ReceiptSender.extractIds(message.data)
+            val (notifId, userId, campaign) = ReceiptSender.extractIds(message.data)
             if (notifId == null) return
             val config = PushproofCore.config(service.applicationContext) ?: return
-            ReceiptSender.send(service.applicationContext, notifId, userId, config)
+            ReceiptSender.send(service.applicationContext, notifId, userId, config, campaign)
         }
     }
 }
