@@ -1,5 +1,5 @@
 // swift-tools-version:5.9
-// Pushproof iOS SDK v1.2.0
+// Pushproof iOS SDK v1.3.0
 import PackageDescription
 
 // SDK natif iOS Pushproof (SPEC §3/§6). Deux produits :

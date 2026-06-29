@@ -23,23 +23,34 @@ In Xcode:
 
 1. **File → New → Target…**
 2. Choose **Notification Service Extension**.
-3. **Product Name**: `PushproofNSE`. This creates bundle id `<BUNDLE_ID>.nse`.
+3. **Product Name**: `PushproofNotificationExtension`.
 4. Enable the scheme if Xcode offers to do so.
 
-Xcode generates a `NotificationService.swift` file in the `PushproofNSE/` folder.
+Xcode generates a `NotificationService.swift` file in the
+`PushproofNotificationExtension/` folder.
+
+> ⚠️ **Do NOT name the target `PushproofNSE`.** That is the name of the SDK's
+> Swift Package **product** — a target with the same name shadows it, so
+> `import PushproofNSE` would import your *own* (empty) target and you'd get
+> *"Cannot find type PushproofNotificationService"*. Any name other than
+> `PushproofNSE` / `PushproofCore` works; we use `PushproofNotificationExtension`.
 
 ## 2. Add the `Pushproof` Swift Package
 
 1. **File → Add Package Dependencies…**
 2. Repository URL: `https://github.com/csurbier/pushproofsdk`
-   (`Package.swift` is at the repo root). Pin version **1.2.0** (git tag `1.2.0`).
-3. Link the products:
+   (`Package.swift` is at the repo root). Pin version **1.3.0** (git tag `1.3.0`).
+3. Link the products (General → Frameworks, Libraries, and Embedded Content):
    - **PushproofCore** → **App** target.
-   - **PushproofNSE** → **PushproofNSE** target.
+   - **PushproofNSE** (the *package product*, not a target) → **PushproofNotificationExtension** target.
+
+> Tip: if you see *"File is part of module PushproofNSE"*, the target itself is
+> still named `PushproofNSE` — rename it (or set its **PRODUCT_MODULE_NAME** to
+> something else, e.g. `PushproofNotificationExt`).
 
 ## 3. Replace the generated code
 
-Replace the entire contents of `PushproofNSE/NotificationService.swift` with:
+Replace the entire contents of `PushproofNotificationExtension/NotificationService.swift` with:
 
 ```swift
 import PushproofNSE
@@ -54,19 +65,23 @@ That's it: the base class posts the receipt and then passes the notification thr
 The App Group is the only channel between the app and the NSE (separate processes).
 It carries the endpoint, ingest key, and installation identifier.
 
-For **each** target (App and PushproofNSE):
+For **each** target (App and PushproofNotificationExtension):
 
 1. **Signing & Capabilities → + Capability → App Groups**.
 2. Add **the same** group: `group.<BUNDLE_ID>`.
 
-## 5. Declare the App Group to the NSE
+## 5. Declare the App Group to the NSE (required)
 
-The NSE must know which group to read. In the **PushproofNSE target Info.plist**,
-add:
+The NSE reads the App Group name from its own Info.plist. In the
+**PushproofNotificationExtension target Info.plist**, add:
 
 | Key | Type | Value |
 |-----|------|--------|
 | `PushproofAppGroup` | String | `group.<BUNDLE_ID>` |
+
+> This key is **required** with a custom target name. (Only when the target's
+> bundle id ends in `.nse` does the SDK fall back to deriving the group from it —
+> not the case here, so set the key explicitly.)
 
 *(Without this key, the NSE falls back to `group.<BUNDLE_ID>` derived from its own
 bundle id `<BUNDLE_ID>.nse` , which works in the standard case.)*
