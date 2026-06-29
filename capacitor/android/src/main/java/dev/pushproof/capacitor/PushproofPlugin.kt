@@ -27,6 +27,23 @@ class PushproofPlugin : Plugin() {
     }
 
     @PluginMethod
+    fun identify(call: PluginCall) {
+        val userId = call.getString("userId")
+        if (userId == null) {
+            call.reject("userId requis")
+            return
+        }
+        PushproofCore.identify(context, userId)
+        call.resolve()
+    }
+
+    @PluginMethod
+    fun clearIdentity(call: PluginCall) {
+        PushproofCore.clearIdentity(context)
+        call.resolve()
+    }
+
+    @PluginMethod
     fun recordDelivery(call: PluginCall) {
         val notifId = call.getString("notifId")
         if (notifId == null) {

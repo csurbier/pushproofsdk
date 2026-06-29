@@ -32,7 +32,7 @@ Xcode generates a `NotificationService.swift` file in the `PushproofNSE/` folder
 
 1. **File → Add Package Dependencies…**
 2. Repository URL: `https://github.com/csurbier/pushproofsdk`
-   (`Package.swift` is at the repo root). Pin version **1.1.0** (git tag `1.1.0`).
+   (`Package.swift` is at the repo root). Pin version **1.2.0** (git tag `1.2.0`).
 3. Link the products:
    - **PushproofCore** → **App** target.
    - **PushproofNSE** → **PushproofNSE** target.

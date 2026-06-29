@@ -11,6 +11,8 @@ public class PushproofPlugin: CAPPlugin, CAPBridgedPlugin {
     public let jsName = "Pushproof"
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "configure", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "identify", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "clearIdentity", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "recordDelivery", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getPendingReceipts", returnType: CAPPluginReturnPromise),
     ]
@@ -28,6 +30,20 @@ public class PushproofPlugin: CAPPlugin, CAPBridgedPlugin {
             ingestKey: ingestKey,
             appGroup: call.getString("appGroup")
         )
+        call.resolve()
+    }
+
+    @objc func identify(_ call: CAPPluginCall) {
+        guard let userId = call.getString("userId") else {
+            call.reject("userId requis")
+            return
+        }
+        Pushproof.shared.identify(userId: userId)
+        call.resolve()
+    }
+
+    @objc func clearIdentity(_ call: CAPPluginCall) {
+        Pushproof.shared.clearIdentity()
         call.resolve()
     }
 

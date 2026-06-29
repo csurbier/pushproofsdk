@@ -40,6 +40,7 @@ public struct PendingReceipt: Codable, Equatable {
 public enum SharedStore {
     private static let configKey = "pushproof.config"
     private static let installIdKey = "pushproof.installId"
+    private static let userIdKey = "pushproof.userId"
     private static let pendingKey = "pushproof.pending"
 
     /// UserDefaults de l'App Group si configuré, sinon standard (app seule).
@@ -74,6 +75,23 @@ public enum SharedStore {
         let id = UUID().uuidString
         d.set(id, forKey: installIdKey)
         return id
+    }
+
+    /// Identité utilisateur côté appareil (mono-compte) : posée au login via
+    /// `identify`, relue par la NSE (App Group) et attachée aux accusés. Permet
+    /// le suivi par utilisateur **même en envoi batch** (où le payload est partagé
+    /// et ne peut pas porter un user_id par destinataire).
+    public static func saveUserId(_ userId: String, appGroup: String?) {
+        defaults(appGroup: appGroup).set(userId, forKey: userIdKey)
+    }
+
+    public static func loadUserId(appGroup: String?) -> String? {
+        let v = defaults(appGroup: appGroup).string(forKey: userIdKey)
+        return (v?.isEmpty == false) ? v : nil
+    }
+
+    public static func clearUserId(appGroup: String?) {
+        defaults(appGroup: appGroup).removeObject(forKey: userIdKey)
     }
 
     public static func appendPending(_ receipt: PendingReceipt, appGroup: String?) {

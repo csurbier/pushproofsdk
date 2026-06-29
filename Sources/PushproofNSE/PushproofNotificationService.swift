@@ -61,7 +61,7 @@ open class PushproofNotificationService: UNNotificationServiceExtension {
         appGroup: String?,
         completion: @escaping () -> Void
     ) {
-        let (notifId, userId, campaign) = ReceiptSender.extractIds(from: userInfo)
+        let (notifId, payloadUserId, campaign) = ReceiptSender.extractIds(from: userInfo)
         guard
             let notifId = notifId,
             let config = SharedStore.loadConfig(appGroup: appGroup)
@@ -72,6 +72,10 @@ open class PushproofNotificationService: UNNotificationServiceExtension {
 
         let device = SharedStore.installId(appGroup: appGroup)
         let receivedAt = Date()
+        // user_id : override payload (mono-destinataire) sinon identité device-side
+        // posée via `identify` (seule voie possible en envoi batch).
+        let userId = (payloadUserId?.isEmpty == false ? payloadUserId : nil)
+            ?? SharedStore.loadUserId(appGroup: appGroup)
 
         ReceiptSender.send(
             notifId: notifId, userId: userId, platform: "ios",

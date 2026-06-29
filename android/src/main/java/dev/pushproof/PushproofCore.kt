@@ -14,6 +14,7 @@ object PushproofCore {
     private const val KEY_INGEST_URL = "ingestUrl"
     private const val KEY_INGEST_KEY = "ingestKey"
     private const val KEY_INSTALL_ID = "installId"
+    private const val KEY_USER_ID = "userId"
 
     data class Config(val ingestUrl: String, val ingestKey: String)
 
@@ -44,5 +45,28 @@ object PushproofCore {
         val id = UUID.randomUUID().toString()
         p.edit().putString(KEY_INSTALL_ID, id).apply()
         return id
+    }
+
+    /**
+     * Associe l'appareil à un utilisateur (suivi par utilisateur Pro). À appeler
+     * au login. Mono-compte : le dernier `identify` gagne. Attaché aux accusés —
+     * seule voie possible en envoi **batch** (payload partagé). `userId` doit être
+     * un identifiant **opaque** (jamais email/téléphone) ; hashé côté serveur.
+     */
+    fun identify(context: Context, userId: String) {
+        context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit().putString(KEY_USER_ID, userId).apply()
+    }
+
+    /** Dissocie l'appareil de l'utilisateur. À appeler au logout. */
+    fun clearIdentity(context: Context) {
+        context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit().remove(KEY_USER_ID).apply()
+    }
+
+    fun userId(context: Context): String? {
+        val v = context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getString(KEY_USER_ID, null)
+        return if (v.isNullOrEmpty()) null else v
     }
 }

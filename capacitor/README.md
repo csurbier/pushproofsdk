@@ -20,7 +20,7 @@ computes the delivery rate and displays it in the [dashboard](https://app.pushpr
 ## Installation
 
 ```bash
-npm install @pushproof/capacitor@1.1.0
+npm install @pushproof/capacitor@1.2.0
 npx cap sync
 ```
 
@@ -61,7 +61,10 @@ For Pushproof to correlate "sent" and "delivered", your sending backend must,
   to a campaign. Use the **same label** you pass to `POST /v1/sent`, so delivered
   and sent line up per campaign in the dashboard. Without it, deliveries are
   recorded with an empty campaign and won't join your `/v1/sent` declarations.
-- *(optional, Pro)* inject an opaque `user_id` for per-user tracking.
+- *(optional, Pro — single-recipient only)* inject an opaque `user_id` for
+  per-user tracking. ⚠️ This only works for **one-to-one** sends. For **batch /
+  multicast** sends the payload is shared by all recipients and **cannot** carry a
+  per-user id — use device-side `identify()` instead (see next section).
 
 Example FCM payload (data-only):
 
@@ -84,6 +87,31 @@ The SDK reads `notif_id`, `campaign` and `user_id` from the payload and relays t
 on the receipt — it never invents them. Also declare your sends via `POST /v1/sent`
 (with the same `campaign`) to get a true *rate* (delivered / sent). See the
 [API reference](https://app.pushproof.dev/docs).
+
+## 2b. Per-user tracking (Pro) — device-side identity
+
+To answer *"did **this user** receive this notification?"* with **batch sends**,
+tag the user **on the device**, not in the payload. The app knows who is logged in;
+the SDK attaches that `userId` to every receipt — the only thing that survives a
+shared multicast payload.
+
+```ts
+import { Pushproof } from '@pushproof/capacitor';
+
+// on login
+await Pushproof.identify({ userId: 'usr_4f3a9c' });
+
+// on logout
+await Pushproof.clearIdentity();
+```
+
+- **Mono-account**: one user per device; the last `identify()` wins (call it again
+  on account switch). `clearIdentity()` on logout.
+- On iOS the identity is stored in the **App Group** so the NSE attaches it even
+  when the app is closed.
+- `userId` must be an **opaque** id (never email/phone) — it is hashed server-side.
+- A `user_id` in the payload (single-recipient sends) still works and **overrides**
+  the device identity for that push.
 
 ## 3. iOS setup (NSE target)
 
@@ -178,6 +206,8 @@ PushNotifications.addListener('pushNotificationReceived', (notif) => {
 | Method | Description |
 |--------|-------------|
 | `configure(config)` | **Required.** Registers `ingestUrl`, `ingestKey`, `appGroup`. |
+| `identify({ userId })` | Tags the device with a user (Pro). Call at login. Mono-account. |
+| `clearIdentity()` | Removes the device↔user link. Call at logout. |
 | `recordDelivery({ notifId, campaign?, userId? })` | Captures a delivery in-app (iOS foreground). Idempotent. |
 | `getPendingReceipts()` | Receipts queued by the NSE during degraded network (iOS). |
 
@@ -190,7 +220,7 @@ endpoints:
 
 - **iOS**: add the `Pushproof` Swift Package (`https://github.com/csurbier/pushproofsdk`).
 - **Android**: via [JitPack](https://jitpack.io) — add `maven { url 'https://jitpack.io' }`,
-  then `implementation 'com.github.csurbier:pushproofsdk:1.1.0'`.
+  then `implementation 'com.github.csurbier:pushproofsdk:1.2.0'`.
 
 > When using `@pushproof/capacitor`, the Android core is already bundled in the
 > plugin — you don't add the JitPack dependency.

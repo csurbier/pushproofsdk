@@ -34,7 +34,7 @@ INSTALL-iOS-NSE.md             Official NSE setup guide (iOS only)
 ### iOS (Swift Package)
 
 `File → Add Package Dependencies…` → `https://github.com/csurbier/pushproofsdk`
-(version **1.1.0** — pin the `1.1.0` git tag), then link **PushproofCore** (app)
+(version **1.2.0** — pin the `1.2.0` git tag), then link **PushproofCore** (app)
 and **PushproofNSE** (NSE target). See
 [INSTALL-iOS-NSE.md](INSTALL-iOS-NSE.md).
 
@@ -52,7 +52,7 @@ repositories {
 then the dependency:
 
 ```gradle
-implementation 'com.github.csurbier:pushproofsdk:1.1.0'
+implementation 'com.github.csurbier:pushproofsdk:1.2.0'
 ```
 
 > **Capacitor users don't need this** — the native core is bundled inside
@@ -61,7 +61,7 @@ implementation 'com.github.csurbier:pushproofsdk:1.1.0'
 ### Capacitor
 
 ```bash
-npm install @pushproof/capacitor@1.1.0
+npm install @pushproof/capacitor@1.2.0
 npx cap sync
 ```
 

@@ -39,8 +39,11 @@ object ReceiptSender {
         onResult: ((Boolean) -> Unit)? = null,
     ) {
         val device = PushproofCore.installId(context)
+        // user_id : l'explicite (override mono-destinataire) prime, sinon l'identité
+        // device-side posée via identify() (seule voie possible en envoi batch).
+        val resolvedUserId = if (!userId.isNullOrEmpty()) userId else PushproofCore.userId(context)
         executor.execute {
-            val ok = runCatching { doPost(notifId, userId, device, config, campaign) }.getOrDefault(false)
+            val ok = runCatching { doPost(notifId, resolvedUserId, device, config, campaign) }.getOrDefault(false)
             onResult?.invoke(ok)
         }
     }

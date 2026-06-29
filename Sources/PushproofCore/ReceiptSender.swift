@@ -28,8 +28,12 @@ public enum ReceiptSender {
             "platform": platform,
             "receivedAt": ISO8601DateFormatter().string(from: receivedAt),
         ]
-        if let userId = userId, !userId.isEmpty {
-            body["userId"] = userId
+        // user_id : l'explicite (override mono-destinataire) prime, sinon l'identité
+        // device-side posée via `identify` (seule voie possible en envoi batch).
+        let resolvedUserId = (userId?.isEmpty == false ? userId : nil)
+            ?? SharedStore.loadUserId(appGroup: config.appGroup)
+        if let resolvedUserId = resolvedUserId, !resolvedUserId.isEmpty {
+            body["userId"] = resolvedUserId
         }
         if let campaign = campaign, !campaign.isEmpty {
             body["campaign"] = campaign

@@ -23,6 +23,21 @@ public final class Pushproof {
         SharedStore.installId(appGroup: config?.appGroup)
     }
 
+    /// Associe l'appareil à un utilisateur (suivi par utilisateur Pro). À appeler
+    /// **au login**. Mono-compte : le dernier `identify` gagne. Persisté dans
+    /// l'App Group pour que la NSE l'attache aux accusés, même en envoi **batch**
+    /// (où le payload partagé ne peut pas porter un user_id par destinataire).
+    /// `userId` doit être un identifiant **opaque** (jamais email/téléphone) ; il
+    /// est hashé côté serveur.
+    public func identify(userId: String) {
+        SharedStore.saveUserId(userId, appGroup: config?.appGroup)
+    }
+
+    /// Dissocie l'appareil de l'utilisateur. À appeler **au logout**.
+    public func clearIdentity() {
+        SharedStore.clearUserId(appGroup: config?.appGroup)
+    }
+
     /// Envoie un accusé depuis l'app (cas in-app / mode dégradé). En pratique,
     /// la réception réelle est captée par la NSE ; cette méthode sert aux tests
     /// et au renvoi des accusés mis en file.
