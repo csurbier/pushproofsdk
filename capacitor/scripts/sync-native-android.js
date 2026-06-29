@@ -18,6 +18,8 @@ const FILES = [
   'ReceiptSender.kt',
   'PushproofMessagingService.kt',
   'NotificationDisplay.kt',
+  'AppForeground.kt',
+  'CapacitorPushForwarder.kt',
 ];
 
 const repoRoot = path.resolve(__dirname, '..', '..');

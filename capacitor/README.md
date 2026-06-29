@@ -20,7 +20,7 @@ computes the delivery rate and displays it in the [dashboard](https://app.pushpr
 ## Installation
 
 ```bash
-npm install @pushproof/capacitor@1.3.1
+npm install @pushproof/capacitor@1.3.2
 npx cap sync
 ```
 
@@ -171,30 +171,37 @@ override fun onMessageReceived(message: RemoteMessage) {
 ### Android visual display (data-only)
 
 Data-only FCM messages do not show in the system tray by themselves. **Pushproof
-handles this for you** — no extra client code required.
+handles display for you** — no extra client code required.
 
-When `displayNotification` is enabled (**default: `true`**), the SDK posts a
-system notification from `data.title` and `data.body` every time
-`onMessageReceived` runs (foreground and background). Your existing `configure()`
-call is enough:
+When `displayNotification` is enabled (**default: `true`**), behavior depends on
+app state:
+
+| State | Behavior |
+|-------|----------|
+| **Foreground** | Forwards to `@capacitor/push-notifications` → `pushNotificationReceived` (your in-app popup). No system notification. |
+| **Background / killed** | Posts a system notification from `data.title` and `data.body`. |
+
+Your existing `configure()` call is enough:
 
 ```ts
 await Pushproof.configure({
   ingestUrl: 'https://api.pushproof.dev/v1/receipts',
   ingestKey: 'pk_ingest_…',
   appGroup: 'group.com.example.app',
-  // displayNotification: true,  // default — set false if you render notifications yourself
+  // displayNotification: true,  // default — set false to handle all display yourself
 });
 ```
 
 Requirements:
 
-- `title` and `body` must be present in the FCM `data` payload (see example above).
-- On Android 13+, the app must have notification permission (usually already
-  granted via `@capacitor/push-notifications`).
+- `title` and `body` in the FCM `data` payload (see example above).
+- `@capacitor/push-notifications` installed for foreground in-app popups.
+- On Android 13+, notification permission (usually already granted).
 
-If you already display notifications yourself (custom FCM service with extra UI
-logic), pass `displayNotification: false` to avoid duplicates.
+In your `pushNotificationReceived` listener, read fields from `notification.data`
+(e.g. `notification.data.title`, `notification.data.notif_id`).
+
+If you handle all display yourself, pass `displayNotification: false`.
 
 ## App states (important)
 
@@ -203,7 +210,7 @@ The capture path depends on the platform **and** app state:
 | State | iOS | Android |
 |-------|-----|---------|
 | **Closed / background** | NSE (reliable, captures) | `onMessageReceived` (data-only) |
-| **Foreground (open)** | NSE **may be bypassed** → call `recordDelivery()` | `onMessageReceived` runs → captured |
+| **Foreground (open)** | NSE **may be bypassed** → call `recordDelivery()` | `onMessageReceived` → Capacitor `pushNotificationReceived` (in-app) |
 
 In other words, on **iOS with the app open**, iOS often delivers the notification
 directly to the app without going through the NSE. To avoid gaps, call

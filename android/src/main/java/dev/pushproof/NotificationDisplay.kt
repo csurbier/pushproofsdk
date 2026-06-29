@@ -24,6 +24,10 @@ object NotificationDisplay {
 
     fun showIfEnabled(context: Context, data: Map<String, String>) {
         if (!PushproofCore.displayNotification(context)) return
+        show(context, data)
+    }
+
+    fun show(context: Context, data: Map<String, String>) {
         val title = extractTitle(data) ?: return
         val body = extractBody(data) ?: return
         if (!canPost(context)) return

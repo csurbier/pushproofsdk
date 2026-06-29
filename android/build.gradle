@@ -34,6 +34,7 @@ dependencies {
     // FirebaseMessagingService est fourni par l'app cliente (déjà sur FCM).
     compileOnly 'com.google.firebase:firebase-messaging:24.0.0'
     implementation 'androidx.core:core:1.12.0'
+    implementation 'androidx.lifecycle:lifecycle-process:2.7.0'
 }
 
 // JitPack remplace le groupId par com.github.csurbier ; l'artifactId = nom du module (android).

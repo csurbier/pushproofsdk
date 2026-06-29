@@ -28,8 +28,20 @@ open class PushproofMessagingService : FirebaseMessagingService() {
             val (notifId, userId, campaign) = ReceiptSender.extractIds(message.data)
             if (notifId == null) return
             val config = PushproofCore.config(service.applicationContext) ?: return
-            NotificationDisplay.showIfEnabled(service.applicationContext, message.data)
-            ReceiptSender.send(service.applicationContext, notifId, userId, config, campaign)
+            val ctx = service.applicationContext
+
+            if (AppForeground.isInForeground()) {
+                // Premier plan : popup in-app via Capacitor ; pas de notification système.
+                val forwarded = CapacitorPushForwarder.forward(message)
+                if (!forwarded && PushproofCore.displayNotification(ctx)) {
+                    NotificationDisplay.show(ctx, message.data)
+                }
+            } else {
+                // Arrière-plan / app fermée : barre système.
+                NotificationDisplay.showIfEnabled(ctx, message.data)
+            }
+
+            ReceiptSender.send(ctx, notifId, userId, config, campaign)
         }
     }
 }
