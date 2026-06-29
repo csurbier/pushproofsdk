@@ -26,7 +26,7 @@ class PushproofPlugin : Plugin() {
             context,
             ingestUrl,
             ingestKey,
-            call.getBoolean("displayNotification", true),
+            call.getBoolean("displayNotification", true) ?: true,
         )
         call.resolve()
     }
