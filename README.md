@@ -92,7 +92,7 @@ implementation 'com.github.csurbier:pushproofsdk:1.3.3'
 ### Capacitor
 
 ```bash
-npm install @pushproof/capacitor@1.3.3
+npm install @pushproof/capacitor@1.3.4
 npx cap sync
 ```
 

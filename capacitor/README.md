@@ -6,7 +6,7 @@ confirmation on iOS (NSE) and Android (FCM data-only).
 ## Quick start
 
 ```bash
-npm install @pushproof/capacitor@1.3.3
+npm install @pushproof/capacitor@1.3.4
 npx cap sync ios android
 ```
 
