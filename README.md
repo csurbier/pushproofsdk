@@ -1,5 +1,7 @@
 # Pushproof SDK
 
+> **Discontinued.** Pushproof is no longer available. The website, dashboard, and API are offline. Do not use this SDK or `@pushproof/capacitor` in new projects.
+
 Open-source (MIT) native SDK for **[Pushproof](https://pushproof.dev/en/)** — device-level
 **push notification delivery confirmation** on iOS (NSE) and Android
 (FirebaseMessagingService), plus the **Capacitor** wrapper.
